@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Cinema
 {
@@ -9,7 +10,6 @@ namespace Cinema
     {
         private ApiClient _apiClient;
         private List<Projection> _projections;
-        //private ProjectionList projectionList;
 
         public Form1()
         {
@@ -21,78 +21,83 @@ namespace Cinema
         {
             ProjectionList projectionList = await _apiClient.GetProjections();
             _projections = projectionList.data;
+            foreach(Projection projection in _projections) {
+                Console.WriteLine(projection.Id);
+                Console.WriteLine(projection.SceneId);
+                Console.WriteLine(projection.SceneSeats);
+                Console.WriteLine(projection.Movie.MovieName);
+                Console.WriteLine(projection.ProjectionTime);
+                Console.WriteLine(projection.Movie.Genres[0].genre_name);
+            }
             ProjectionTemplate();
         }
         
         private void ProjectionTemplate()
         {
-            var panel1 = new Panel()
-            {
-                Name = "panel1",
-                TabIndex = 0,
-                Size = new System.Drawing.Size(139, 117),
-                BorderStyle = BorderStyle.FixedSingle,
-            };
-            var pictureBox1 = new PictureBox()
-            {
-                Location = new System.Drawing.Point(6, 3),
-                Name = "pictureBox1",
-                Size = new System.Drawing.Size(130, 98),
-                TabIndex = 1,
-                TabStop = false,
-                ImageLocation = "",
-            };
-            var linkLabel1 = new LinkLabel()
-            {
-                AutoSize = true,
-                Location = new System.Drawing.Point(3, 104),
-                Name = "linkLabel1",
-                Size = new System.Drawing.Size(55, 13),
-                TabIndex = 0,
-                TabStop = true,
-                Text = "linkLabel1",
-            };
-            panel1.Controls.Add(pictureBox1);
-            panel1.Controls.Add(linkLabel1);
-            flowLayoutPanel2.Controls.Add(panel1);
-            //linkLabel1.Links.Add(0, linkLabel1.Text.Length, _movies[0].imdbLink);
-            linkLabel1.LinkClicked += linkLabel_LinkClicked;
+            foreach (Projection projection in _projections) {
+                var panel1 = new Panel()
+                {
+                    Name = "panel1",
+                    TabIndex = 0,
+                    Size = new System.Drawing.Size(550, 340),
+                    BorderStyle = BorderStyle.FixedSingle,
+                };
+                var pictureBox1 = new PictureBox()
+                {
+                    Location = new System.Drawing.Point(6, 3),
+                    Name = "pictureBox1",
+                    Size = new System.Drawing.Size(250, 330),
+                    ImageLocation = projection.Movie.CoverImage,
+                };
+                var movieNameLink = new LinkLabel()
+                {
+                    AutoSize = true,
+                    Location = new System.Drawing.Point(pictureBox1.Location.X+pictureBox1.Size.Width+10, 10),
+                    Name = "linkLabel1",
+                    Size = new System.Drawing.Size(55, 13),
+                    Text = projection.Movie.MovieName,
+                    Font = new System.Drawing.Font("Arial", 24)
+                };
+                var premierYearText = new Label
+                {
+                    Text = $"Premiere Year: {projection.Movie.PremierYear}",
+                    Font = new System.Drawing.Font("Arial", 14),
+                    Size = new System.Drawing.Size(200, 20),
+                    Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, 60)
+                };
+                var genresText = new Label
+                {
+                    Text = $"Genres: ",
+                    Font = new System.Drawing.Font("Arial", 14),
+                    Size = new System.Drawing.Size(200, 20),
+                    Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, 80)
+                };
+                var projectionTimeText = new Label
+                {
+                    Text = $"Projection Date: {projection.ProjectionTime.ToShortDateString()}\nProjection Time: {projection.ProjectionTime.ToShortTimeString()}",
+                    Font = new System.Drawing.Font("Arial", 14),
+                    Size = new System.Drawing.Size(300, 60),
+                    Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, 120)
+                };
+                var buttonBuy = new Button()
+                {
+                    Size = new System.Drawing.Size(270, 60),
+                    Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, pictureBox1.Location.Y + pictureBox1.Size.Height - 60),
+                    Text = "Buy Ticket",
+                    Font = new System.Drawing.Font("Arial", 24),
+                };
+                movieNameLink.Links.Add(0, movieNameLink.Text.Length, projection.Movie.MovieName);
+                movieNameLink.LinkClicked += linkLabel_LinkClicked;
+                panel1.Controls.Add(pictureBox1);
+                panel1.Controls.Add(movieNameLink);
+                panel1.Controls.Add(premierYearText);
+                panel1.Controls.Add(genresText);
+                panel1.Controls.Add(projectionTimeText);
+                panel1.Controls.Add(buttonBuy);
+                flowLayoutPanel2.Controls.Add(panel1);
+                
 
-
-            var panel2 = new Panel()
-            {
-                Name = "panel2",
-                TabIndex = 0,
-                Size = new System.Drawing.Size(139, 117),
-                BorderStyle = BorderStyle.FixedSingle
-            };
-            var pictureBox2 = new PictureBox()
-            {
-                Location = new System.Drawing.Point(6, 3),
-                Name = "pictureBox2",
-                Size = new System.Drawing.Size(130, 98),
-                TabIndex = 1,
-                TabStop = false,
-                ImageLocation = "",
-            };
-            var linkLabel2 = new LinkLabel()
-            {
-                AutoSize = true,
-                //Location = new System.Drawing.Point(3, pictureBox2.Location.Y + pictureBox2.Size.Height - 5),
-                Location = new System.Drawing.Point(3, 104),
-                Name = "linkLabel2",
-                Size = new System.Drawing.Size(55, 13),
-                TabIndex = 0,
-                TabStop = true,
-                Text = "linkLabel2",
-            };
-            panel2.Controls.Add(pictureBox2);
-            panel2.Controls.Add(linkLabel2);
-            flowLayoutPanel2.Controls.Add(panel2);
-            //linkLabel2.Links.Add(0, linkLabel2.Text.Length, "https://google.com");
-            linkLabel2.LinkClicked += linkLabel_LinkClicked;
-
-
+            }
         }
 
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
