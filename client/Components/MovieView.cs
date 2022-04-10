@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cinema
+namespace Cinema.Components
 {
-    public class Movie : Watchable
+    class MovieView
     {
-        
     }
 }

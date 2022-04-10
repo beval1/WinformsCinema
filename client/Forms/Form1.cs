@@ -20,14 +20,15 @@ namespace Cinema
         private async void Form1_Load(object sender, EventArgs e)
         {
             ProjectionList projectionList = await _apiClient.GetProjections();
-            _projections = projectionList.data;
+            _projections = projectionList.Data;
             foreach(Projection projection in _projections) {
                 Console.WriteLine(projection.Id);
                 Console.WriteLine(projection.SceneId);
                 Console.WriteLine(projection.SceneSeats);
                 Console.WriteLine(projection.Movie.MovieName);
                 Console.WriteLine(projection.ProjectionTime);
-                Console.WriteLine(projection.Movie.Genres[0].genre_name);
+                Console.WriteLine(projection.Movie.Genres[0].genreName);
+                Console.WriteLine(string.Join(", ", projection.Movie.Genres.Select(g=>g.genreName).ToArray()));       
             }
             ProjectionTemplate();
         }
@@ -39,7 +40,7 @@ namespace Cinema
                 {
                     Name = "panel1",
                     TabIndex = 0,
-                    Size = new System.Drawing.Size(550, 340),
+                    Size = new System.Drawing.Size(560, 340),
                     BorderStyle = BorderStyle.FixedSingle,
                 };
                 var pictureBox1 = new PictureBox()
@@ -67,17 +68,24 @@ namespace Cinema
                 };
                 var genresText = new Label
                 {
-                    Text = $"Genres: ",
+                    Text = $"Genres: {String.Join(", ", projection.Movie.Genres.Select(g => g.genreName).ToArray())}",
                     Font = new System.Drawing.Font("Arial", 14),
-                    Size = new System.Drawing.Size(200, 20),
+                    Size = new System.Drawing.Size(300, 40),
                     Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, 80)
                 };
                 var projectionTimeText = new Label
                 {
                     Text = $"Projection Date: {projection.ProjectionTime.ToShortDateString()}\nProjection Time: {projection.ProjectionTime.ToShortTimeString()}",
                     Font = new System.Drawing.Font("Arial", 14),
-                    Size = new System.Drawing.Size(300, 60),
+                    Size = new System.Drawing.Size(300, 50),
                     Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, 120)
+                };
+                var ticketPriceText = new Label
+                {
+                    Text = $"Ticket price: {projection.TicketPrice} BGN",
+                    Font = new System.Drawing.Font("Arial", 14),
+                    Size = new System.Drawing.Size(300, 30),
+                    Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, 250)
                 };
                 var buttonBuy = new Button()
                 {
@@ -86,13 +94,14 @@ namespace Cinema
                     Text = "Buy Ticket",
                     Font = new System.Drawing.Font("Arial", 24),
                 };
-                movieNameLink.Links.Add(0, movieNameLink.Text.Length, projection.Movie.MovieName);
+                movieNameLink.Links.Add(0, movieNameLink.Text.Length, projection.Movie.ImdbLink);
                 movieNameLink.LinkClicked += linkLabel_LinkClicked;
                 panel1.Controls.Add(pictureBox1);
                 panel1.Controls.Add(movieNameLink);
                 panel1.Controls.Add(premierYearText);
                 panel1.Controls.Add(genresText);
                 panel1.Controls.Add(projectionTimeText);
+                panel1.Controls.Add(ticketPriceText);
                 panel1.Controls.Add(buttonBuy);
                 flowLayoutPanel2.Controls.Add(panel1);
                 
@@ -105,7 +114,7 @@ namespace Cinema
             // Specify that the link was visited.
             //e.Link.Visited = true;
 
-            var target = e.Link.LinkData as string;
+            var target = e.Link.LinkData.ToString();
             System.Diagnostics.Process.Start(target);
         }
     }

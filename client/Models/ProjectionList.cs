@@ -8,6 +8,6 @@ namespace Cinema
 {
     public class ProjectionList
     {
-        public List<Projection> data = new List<Projection>();
+        public List<Projection> Data { get; set; } = new List<Projection>();
     }
 }

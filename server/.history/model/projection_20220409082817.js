@@ -16,9 +16,9 @@ export const Projections = (sequelize, DataTypes) => sequelize.define('Projectio
         //     key: "id"
         // },
     },
-    ticketPrice: {
-        type: DataTypes.DECIMAL(10,2),
-        allowNull: false,
+    sceneSeats: {
+        type: DataTypes.JSON,
+        allowNull: true,
     },
     sceneSeats: {
         type: DataTypes.JSON,

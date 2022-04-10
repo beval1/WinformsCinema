@@ -1,6 +1,6 @@
 export const Movies = (sequelize, DataTypes) => sequelize.define('Movie', {
     // Model attributes are defined here
-    Name: {
+    movieName: {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: "UNKNOWN",

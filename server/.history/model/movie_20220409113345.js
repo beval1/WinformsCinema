@@ -1,4 +1,4 @@
-export const Movies = (sequelize, DataTypes) => sequelize.define('Movie', {
+export const  = (sequelize, DataTypes) => sequelize.define('Movie', {
     // Model attributes are defined here
     Name: {
         type: DataTypes.STRING,
