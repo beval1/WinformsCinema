@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=ul>, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <form>
+    <label for="movie-name">Movie Name</label>
+    <input type="text" name="movie-name" id="movie-name" />
+    <br>
+    <label for="movie-cover">Movie Cover</label>
+    <input type="text" name="movie-cover" id="movie-cover" />
+    <br>
+    <label for="movie-imdb">Movie IMDb Link</label>
+    <input type="text" name="movie-imdb" id="movie-imdb" />
+    <br>
+    <label for="movie-year">Movie Year</label>
+    <input type="text" name="movie-year" id="movie-year" />
+    <br>
+    <label for="movie-genre">Movie Genres</label>
+    <input type="text" name="movie-genre" id="movie-genre" />
+    <br>
+    <!-- <label>Select Image File:</label>
+    <br>
+    <input type="file" name="image"> -->
+    <input type="submit" name="submit" value="Submit">
+  </form>
+  <script>
+    const uploadForm = document.getElementsByTagName('form')[0]
+    uploadForm.addEventListener('submit', function (e) {
+      e.preventDefault()
+      //let file = e.target.image.files[0]
+      let formData = new FormData(e.target)
+
+      //formData.append('file', file)
+      let data = {
+        movieName: formData.get('movie-name'),
+        premierYear: formData.get('movie-year'),
+        coverImage: formData.get('movie-cover'),
+        imdbLink: formData.get('movie-imdb'),
+        genres: formData.get('movie-genre').split(',')
+      }
+      console.log(data)
+      fetch('http://151.251.53.219:3002/add-movie', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        })
+        .then(resp => resp.json())
+        .then(data => {
+          if (data.errors) {
+            alert(data.errors)
+          } else {
+            console.log(data)
+          }
+        })
+    })
+  </script>
+</body>
+
+</html>
