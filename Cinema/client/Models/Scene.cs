@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cinema.Models
+namespace Cinema
 {
-    class Scene
+    public class Scene
     {
+        public int Id { get; set; }
+        public String Name { get; set; }
+        public SceneSeats SceneSeats { get; set; }
     }
 }

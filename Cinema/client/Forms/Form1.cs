@@ -23,10 +23,12 @@ namespace Cinema
             foreach(Projection projection in _projections) {
                 Console.WriteLine(projection.Id);
                 Console.WriteLine(projection.SceneId);
+                Console.WriteLine(projection.Scene.Name);
                 Console.WriteLine(projection.SceneSeats);
+                Console.WriteLine(projection.Scene.SceneSeats.Scene[1][1]);
                 Console.WriteLine(projection.Movie.Name);
                 Console.WriteLine(projection.ProjectionTime);
-                Console.WriteLine(projection.Movie.Genres[0].genreName);
+                //Console.WriteLine(projection.Movie.Genres[0].genreName);
                 Console.WriteLine(string.Join(", ", projection.Movie.Genres.Select(g=>g.genreName).ToArray()));       
             }
             ProjectionTemplate();
@@ -34,6 +36,7 @@ namespace Cinema
         
         private void ProjectionTemplate()
         {
+            //int index = 0;
             foreach (Projection projection in _projections) {
                 var panel1 = new Panel()
                 {
@@ -92,7 +95,9 @@ namespace Cinema
                     Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, pictureBox1.Location.Y + pictureBox1.Size.Height - 60),
                     Text = "Buy Ticket",
                     Font = new System.Drawing.Font("Arial", 24),
+                    Tag = projection,
                 };
+                buttonBuy.Click += (sender, EventArgs) => { buy_clicked(sender, EventArgs); };
                 movieNameLink.Links.Add(0, movieNameLink.Text.Length, projection.Movie.ImdbLink);
                 movieNameLink.LinkClicked += linkLabel_LinkClicked;
                 panel1.Controls.Add(pictureBox1);
@@ -103,9 +108,17 @@ namespace Cinema
                 panel1.Controls.Add(ticketPriceText);
                 panel1.Controls.Add(buttonBuy);
                 flowLayoutPanel2.Controls.Add(panel1);
-                
 
+                //index++;
             }
+        }
+
+        private void buy_clicked(object sender, EventArgs e)
+        {
+            Projection projection = (Projection) ((Control)sender).Tag;
+            SceneForm frm = new SceneForm(projection);
+            frm.ShowDialog();
+            //Hide();
         }
 
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

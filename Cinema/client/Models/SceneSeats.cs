@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cinema.Components
+namespace Cinema
 {
-    class ShowView
+    public class SceneSeats
     {
+        public Dictionary<int, Dictionary<int, int>> Scene { get; set; }
     }
 }
