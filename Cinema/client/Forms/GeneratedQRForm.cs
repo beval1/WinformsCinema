@@ -7,23 +7,25 @@ namespace Cinema
 {
     public partial class GeneratedQRForm : Form
     {
-        private readonly Seat _seat = null;
+        private readonly Ticket _ticket = null;
         private readonly GeneratedBarcode _barcode = null;
         private readonly Projection _projection = null;
 
-        public GeneratedQRForm(GeneratedBarcode barcode, Projection projection, Seat seat)
+        public GeneratedQRForm(GeneratedBarcode barcode, Projection projection, Ticket ticket)
         {
             InitializeComponent();
             _barcode = barcode;
             _projection = projection;
-            _seat = seat;
+            _ticket = ticket;
         }
 
         private void GeneratedQRForm_Load(object sender, EventArgs e)
         {
+            CenterToScreen();
             pictureBox1.Image = _barcode.Image;
-            label1.Text = $"Movie: {_projection.Movie.Name}\nTicket Price: {_projection.TicketPrice} BGN\n" +
-                $"Seat: row-{_seat.Row}; column-{_seat.Col}";
+            label1.Text = $"Client Name: {_ticket.OwnerFullName}\nMovie: {_projection.Movie.Name}\nTicket Price: {_projection.TicketPrice} BGN\n" +
+                $"Seat: row-{_ticket.SeatRow}; column-{_ticket.SeatCol}\nProjection Date: { _projection.ProjectionTime.ToShortDateString()}\n" +
+                $"Projection Time: { _projection.ProjectionTime.ToShortTimeString()}";
             label1.Font = new System.Drawing.Font("Arial", 14);
         }
 

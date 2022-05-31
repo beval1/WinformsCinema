@@ -7,30 +7,19 @@ namespace Cinema
 {
     public partial class Form1 : Form
     {
-        private ApiClient _apiClient;
+        private readonly ApiClient _apiClient;
         private List<Projection> _projections;
 
         public Form1()
         {
             InitializeComponent();
-            _apiClient = new ApiClient();
+            _apiClient = ApiClient.Instance;
         }
 
         private async void Form1_Load(object sender, EventArgs e)
         {
             ProjectionList projectionList = await _apiClient.GetProjections();
             _projections = projectionList.Data;
-            foreach(Projection projection in _projections) {
-                Console.WriteLine(projection.Id);
-                Console.WriteLine(projection.SceneId);
-                Console.WriteLine(projection.Scene.Name);
-                Console.WriteLine(projection.SceneSeats);
-                Console.WriteLine(projection.Scene.SceneSeats.Scene[1][1]);
-                Console.WriteLine(projection.Movie.Name);
-                Console.WriteLine(projection.ProjectionTime);
-                //Console.WriteLine(projection.Movie.Genres[0].genreName);
-                Console.WriteLine(string.Join(", ", projection.Movie.Genres.Select(g=>g.genreName).ToArray()));       
-            }
             ProjectionTemplate();
         }
         

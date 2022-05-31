@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cinema.Models
+namespace Cinema
 {
-    class Ticket
+    public class Ticket
     {
-        public string Uuid { get; private set; }
-        public int ProjectionId { get; private set; }
-        public int SeatId { get; private set; }
-        public string OwnerFullName { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public DateTime UpdatedAt { get; private set; }
+        public string Uuid { get; set; }
+        public int ProjectionId { get; set; }
+        public int SeatRow { get;  set; }
+        public int SeatCol { get; set; }
+        public string OwnerFullName { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

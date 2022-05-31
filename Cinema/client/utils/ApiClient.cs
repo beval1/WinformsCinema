@@ -2,16 +2,26 @@
 using System.Threading.Tasks;
 using System;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace Cinema
 {
-    class ApiClient
+    //singleton class
+    public sealed class ApiClient
     {
-        private RestClient _client;
+        private static readonly ApiClient instance = new ApiClient();
+        private readonly RestClient _client = new RestClient();
 
-        public ApiClient()
+        static ApiClient()
+        {
+        }
+        private ApiClient()
         {
             _client = new RestClient("http://localhost:3002/");
+        }
+        public static ApiClient Instance
+        {
+            get { return instance; }
         }
 
         public async Task<MoviesList> GetMovie()
@@ -21,29 +31,35 @@ namespace Cinema
             var queryResult =  await _client.ExecuteAsync(request);
             Console.WriteLine(queryResult.Content);
             MoviesList movies = JsonConvert.DeserializeObject<MoviesList>(queryResult.Content);
-            /*
-            Console.WriteLine(movies.data.Count);
-            foreach (var movie in movies.data)
-            {
-                Console.WriteLine("print");
-                Console.WriteLine(movie.id);
-                Console.WriteLine(movie.movieName);
-                Console.WriteLine(movie.coverImage);
-                Console.WriteLine(movie.imdbLink);
-                Console.WriteLine(movie.premierYear);
-            }
-            */
             return movies;
         }
 
         public async Task<ProjectionList> GetProjections()
         {
             var request = new RestRequest("get-projections/", Method.Get);
-            var queryResult = await _client.ExecuteAsync(request);
-            Console.WriteLine(queryResult.Content);
-            ProjectionList projections = JsonConvert.DeserializeObject<ProjectionList>(queryResult.Content);
-            
-            return projections;
+            var response = await _client.ExecuteAsync(request);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                ProjectionList projections = JsonConvert.DeserializeObject<ProjectionList>(response.Content);
+                return projections;
+            }
+            return null;
+        }
+
+        public async Task<TicketRoot> CreateTicket(TicketWrapper ticket)
+        {
+            var request = new RestRequest("create-ticket/", Method.Post);
+            //request.AddParameter("application/json", json, ParameterType.RequestBody);
+            request.RequestFormat = DataFormat.Json;
+            request.AddBody(ticket);
+            Console.WriteLine(ticket);
+            var response = await _client.ExecuteAsync(request);
+            Console.WriteLine(response.Content);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return JsonConvert.DeserializeObject<TicketRoot>(response.Content);
+            }
+            return null;
         }
     }
 }

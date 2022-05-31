@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace Cinema
 {
@@ -16,11 +18,16 @@ namespace Cinema
         private readonly Projection _projection;
         private readonly List<Seat> _seats = new List<Seat>();
         private Seat _clickedSeat = null;
+        private readonly ApiClient _apiClient;
+        private SceneSeats _scene = null;
+        private string _ownerName = string.Empty;
 
         public SceneForm(Projection projection)
         {
             InitializeComponent();
             _projection = projection;
+            _apiClient = ApiClient.Instance;
+            NameForm.NameChanged += name => _ownerName = name;
         }
 
         private void SceneForm_Load(object sender, EventArgs e)
@@ -37,9 +44,17 @@ namespace Cinema
 
         private void LoadScene()
         {
+            if (_projection.SceneSeats != null)
+            {
+                _scene = _projection.SceneSeats;
+            } else
+            {
+                _scene = _projection.Scene.SceneSeats;
+            }
+
             Console.WriteLine(_projection.Id);
-            int sceneRows = _projection.Scene.SceneSeats.Scene.Count;
-            int sceneCols = _projection.Scene.SceneSeats.Scene[1].Count;
+            int sceneRows = _scene.Scene.Count;
+            int sceneCols = _scene.Scene[1].Count;
             int yIncrement = 20;
             int xIncrement = 40;
             int width = 40;
@@ -53,10 +68,19 @@ namespace Cinema
             int y = yStart;
             for (int row = 1; row <= sceneRows; row++)
             {
-                for (int col = 1; col <= _projection.Scene.SceneSeats.Scene[row].Count; col++)
+                //label for row
+                this.Controls.Add(
+                new Label()
+                {
+                    Text = row.ToString(),
+                    Location = new Point(xStart - 50, y + 5),
+                    Font = new Font("Arial", 20),
+                    Size = new Size(30, 30),
+                }); 
+                for (int col = 1; col <= sceneCols; col++)
                 {
                     Seat seat;
-                    if (_projection.Scene.SceneSeats.Scene[row][col] == 1)
+                    if (_scene.Scene[row][col] == 1)
                     {
                         seat = new TakenSeat();
                     } else
@@ -67,6 +91,17 @@ namespace Cinema
                     seat.Col = col;
                     _seats.Add(seat);
                     seat.Visiualize(new Point(x, y), width, height);
+                    //label for column
+                    if (row == sceneRows)
+                    {
+                        this.Controls.Add(new Label()
+                        {
+                            Text = col.ToString(),
+                            Location = new Point(x + 5, yStart - 50),
+                            Font = new Font("Arial", 20),
+                            Size = new Size(30, 30),
+                        });
+                    }
                     x += width + xIncrement;
                 }
                 x -= sceneCols * (width + xIncrement);
@@ -122,10 +157,15 @@ namespace Cinema
                     result = MessageBox.Show(message, caption, buttons);
                     if (result == System.Windows.Forms.DialogResult.Yes)
                     {
-                        var generatedBarcode = GenerateBarcode();
-                        GeneratedQRForm qrForm = new GeneratedQRForm(generatedBarcode, _projection, _clickedSeat);
-                        qrForm.ShowDialog();
-                    } else { RefreshSelected(); }
+                        Form nameForm = new NameForm();
+                        nameForm.ShowDialog();
+                        Hide();
+                        if (_ownerName != null && _ownerName != "")
+                        {
+                            GenerateBarcode();
+                        }
+                        else { RefreshSelected(); }
+                    }
                 }
                 else
                 {
@@ -140,14 +180,44 @@ namespace Cinema
             Invalidate();
         }
 
-        private GeneratedBarcode GenerateBarcode()
+        private async void GenerateBarcode()
         {
-            //send request to the backend for generating ticket
+            //set the clicked seat as taken
+            _scene.Scene[_clickedSeat.Row][_clickedSeat.Col] = 1;
 
+            //wrap up everything in a ticketwrapper object
+            TicketWrapper ticket = new TicketWrapper
+            {
+                Projection = _projection,
+                SeatRow = _clickedSeat.Row,
+                SeatCol = _clickedSeat.Col,
+                OwnerFullName = _ownerName,
+                Scene = _scene,
+            };
+
+            //convert projection object to json
+            //string json = JsonConvert.SerializeObject(_projection);
+            //string json = Regex.Unescape(JsonConvert.SerializeObject(_projection, Formatting.Indented));
+            //no need to manually convert, RestSharp does it for us
+
+            //send request to the backend for generating ticket
+            TicketRoot generatedTicket = await _apiClient.CreateTicket(ticket);
+            if (generatedTicket == null)
+            {
+                string message = "Error creating a ticket";
+                string caption = "Error!";
+                MessageBoxButtons buttons = MessageBoxButtons.OK;
+                MessageBox.Show(message, caption, buttons);
+                return;
+            }
 
             //generate barcode with ticketID
-            var barCode = IronBarCode.QRCodeWriter.CreateBarcode("https://ironsoftware.com/csharp/barcode");
-            return barCode;
+            Console.WriteLine(generatedTicket.Ticket.Uuid);
+            var barcode = IronBarCode.QRCodeWriter.CreateBarcode(generatedTicket.Ticket.Uuid);
+
+            //show QR form
+            GeneratedQRForm qrForm = new GeneratedQRForm(barcode, _projection, generatedTicket.Ticket);
+            qrForm.ShowDialog();
         }
 
         private void RefreshSelected()

@@ -231,8 +231,14 @@
     <Compile Include="Components\MovieView.cs" />
     <Compile Include="Components\Rectangle.cs" />
     <Compile Include="Components\Seat.cs" />
-    <Compile Include="Components\ShowView.cs" />
     <Compile Include="Components\TakenSeat.cs" />
+    <Compile Include="Components\TicketWrapper.cs" />
+    <Compile Include="Forms\NameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NameForm.Designer.cs">
+      <DependentUpon>NameForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\SceneSeats.cs" />
     <Compile Include="Forms\Form1.cs">
       <SubType>Form</SubType>
@@ -240,11 +246,11 @@
     <Compile Include="Forms\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\GeneratedBarcodeForm.cs">
+    <Compile Include="Forms\GeneratedQRForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\GeneratedBarcodeForm.Designer.cs">
-      <DependentUpon>GeneratedBarcodeForm.cs</DependentUpon>
+    <Compile Include="Forms\GeneratedQRForm.Designer.cs">
+      <DependentUpon>GeneratedQRForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\Movie.cs" />
@@ -253,6 +259,7 @@
     <Compile Include="Models\ProjectionList.cs" />
     <Compile Include="Models\Scene.cs" />
     <Compile Include="Models\Ticket.cs" />
+    <Compile Include="Models\TicketRoot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Forms\SceneForm.cs">
@@ -265,8 +272,11 @@
     <EmbeddedResource Include="Forms\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\GeneratedBarcodeForm.resx">
-      <DependentUpon>GeneratedBarcodeForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\GeneratedQRForm.resx">
+      <DependentUpon>GeneratedQRForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NameForm.resx">
+      <DependentUpon>NameForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
