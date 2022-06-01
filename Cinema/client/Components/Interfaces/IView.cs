@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cinema.Components
+namespace Cinema
 {
-    class MovieView
+    public interface IView
     {
+        void Visualize();
     }
 }

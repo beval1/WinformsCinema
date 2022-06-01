@@ -46,6 +46,18 @@ namespace Cinema
             return null;
         }
 
+        public async Task<Ticket> GetTicket(string uuid)
+        {
+            var request = new RestRequest($"get-ticket/{uuid}", Method.Get);
+            var response = await _client.ExecuteAsync(request);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                TicketRoot ticketRoot = JsonConvert.DeserializeObject<TicketRoot>(response.Content);
+                return ticketRoot.Ticket;
+            }
+            return null;
+        }
+
         public async Task<TicketRoot> CreateTicket(TicketWrapper ticket)
         {
             var request = new RestRequest("create-ticket/", Method.Post);

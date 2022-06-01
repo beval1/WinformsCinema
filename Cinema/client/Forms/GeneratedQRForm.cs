@@ -2,19 +2,21 @@
 using System.Windows.Forms;
 using IronBarCode;
 using System.Drawing.Printing;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Cinema
 {
     public partial class GeneratedQRForm : Form
     {
         private readonly Ticket _ticket = null;
-        private readonly GeneratedBarcode _barcode = null;
+        private readonly Image _barcodeImage = null;
         private readonly Projection _projection = null;
 
-        public GeneratedQRForm(GeneratedBarcode barcode, Projection projection, Ticket ticket)
+        public GeneratedQRForm(Image barcode, Projection projection, Ticket ticket)
         {
             InitializeComponent();
-            _barcode = barcode;
+            _barcodeImage = barcode;
             _projection = projection;
             _ticket = ticket;
         }
@@ -22,7 +24,7 @@ namespace Cinema
         private void GeneratedQRForm_Load(object sender, EventArgs e)
         {
             CenterToScreen();
-            pictureBox1.Image = _barcode.Image;
+            pictureBox1.Image = _barcodeImage;
             label1.Text = $"Client Name: {_ticket.OwnerFullName}\nMovie: {_projection.Movie.Name}\nTicket Price: {_projection.TicketPrice} BGN\n" +
                 $"Seat: row-{_ticket.SeatRow}; column-{_ticket.SeatCol}\nProjection Date: { _projection.ProjectionTime.ToShortDateString()}\n" +
                 $"Projection Time: { _projection.ProjectionTime.ToShortTimeString()}";
@@ -38,7 +40,7 @@ namespace Cinema
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    _barcode.SaveAsJpeg("");
+                    _barcodeImage.SaveAsJpeg("");
                 }
             }
             */
@@ -48,7 +50,8 @@ namespace Cinema
             saveFileDialog1.ShowDialog();
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                _barcode.SaveAsJpeg(saveFileDialog1.FileName);
+                //_barcodeImage.SaveAsJpeg(saveFileDialog1.FileName);
+                _barcodeImage.Save(saveFileDialog1.FileName, ImageFormat.Jpeg);
             }
             
         }

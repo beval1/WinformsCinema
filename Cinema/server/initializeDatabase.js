@@ -4,19 +4,19 @@ import {
 } from 'sequelize';
 import {
     Movies
-} from './model/movie.js';
+} from './model/Movie.js';
 import {
     Genres
-} from './model/genre.js';
+} from './model/Genre.js';
 import {
     Tickets
-} from './model/ticket.js';
+} from './model/Ticket.js';
 import {
     Scenes
-} from './model/scene.js';
+} from './model/Scene.js';
 import {
     Projections
-} from './model/projection.js';
+} from './model/Projection.js';
 import {
     MovieGenres
 } from './model/MovieGenres.js';

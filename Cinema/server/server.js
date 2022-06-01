@@ -3,6 +3,9 @@ import cors from 'cors';
 import {
     models
 } from './initializeDatabase.js'
+import {
+    Sequelize
+} from 'sequelize';
 
 const app = Express();
 const port = 3002;
@@ -71,6 +74,45 @@ app.get("/get-projections", async (req, res) => {
     })
 })
 
+app.get("/get-ticket/:id", async (req, res) => {
+    var ticketId = req.params.id;
+    //let result = await models.Ticket.findByPk(ticketId);
+    let result = await models.Ticket.findOne({
+        where: {
+            uuid: ticketId,
+        },
+        attributes: {
+            exclude: ['projection_id']
+        },
+        include: [{
+            model: models.Projection,
+            required: true,
+            attributes: {
+                exclude: ['movie_id', 'scene_id']
+            },
+            include: [{
+                    model: models.Movie,
+                    required: true,
+                    include: [{
+                        model: models.Genre,
+                        required: true,
+                    }]
+                },
+                {
+                    model: models.Scene,
+                    required: true
+                },
+            ],
+        }]
+    });
+
+    console.log(result);
+    //send data to the client;
+    res.json({
+        ticket: result
+    })
+})
+
 app.post("/add-movie", async (req, res) => {
     //get data from request body;
     const data = req.body;
@@ -106,17 +148,17 @@ app.post("/create-ticket", async (req, res) => {
 
     // first update projection scene
     models.Projection.update({
-        sceneSeats: ticket.scene
-    }, {
-        where: {
-            id: ticket.projection.id
-        }
-    }).then(async result => {})
-    .catch(error => {
-        res.json({
-            error: error.message
-        })
-    });
+            sceneSeats: ticket.scene
+        }, {
+            where: {
+                id: ticket.projection.id
+            }
+        }).then(async result => {})
+        .catch(error => {
+            res.json({
+                error: error.message
+            })
+        });
 
     let ticketObj = {
         projectionId: ticket.projection.id,

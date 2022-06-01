@@ -228,7 +228,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\FreeSeat.cs" />
-    <Compile Include="Components\MovieView.cs" />
+    <Compile Include="Components\Interfaces\IView.cs" />
+    <Compile Include="Components\ProjectionView.cs" />
     <Compile Include="Components\Rectangle.cs" />
     <Compile Include="Components\Seat.cs" />
     <Compile Include="Components\TakenSeat.cs" />

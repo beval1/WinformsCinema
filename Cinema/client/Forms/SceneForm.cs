@@ -216,7 +216,7 @@ namespace Cinema
             var barcode = IronBarCode.QRCodeWriter.CreateBarcode(generatedTicket.Ticket.Uuid);
 
             //show QR form
-            GeneratedQRForm qrForm = new GeneratedQRForm(barcode, _projection, generatedTicket.Ticket);
+            GeneratedQRForm qrForm = new GeneratedQRForm(barcode.Image, _projection, generatedTicket.Ticket);
             qrForm.ShowDialog();
         }
 

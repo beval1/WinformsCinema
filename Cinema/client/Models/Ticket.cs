@@ -15,5 +15,6 @@ namespace Cinema
         public string OwnerFullName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public Projection Projection { get; set; }
     }
 }
