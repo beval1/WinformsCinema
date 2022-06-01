@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Cinema
 {
-    public class Genre
+    public class GenreList
     {
-        public int Id { get; set; }
-        public string GenreName { get; set;}
+        public List<Genre> Data { get; set; }
     }
 }

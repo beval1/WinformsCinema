@@ -11,6 +11,7 @@ namespace Cinema
     {
         private readonly ApiClient _apiClient;
         private List<Projection> _projections;
+        //private List<Projection> _projectionsFiltered;
 
         public Form1()
         {
@@ -22,15 +23,94 @@ namespace Cinema
         {
             ProjectionList projectionList = await _apiClient.GetProjections();
             _projections = projectionList.Data;
-            ProjectionTemplate();
+            ProjectionTemplate(_projections);
+            LoadGenres();
         }
         
-        private void ProjectionTemplate()
+        private void ProjectionTemplate(List<Projection> projections)
         {
-            foreach (Projection projection in _projections) {
+            foreach (Projection projection in projections) {
                 ProjectionView projectionView = new ProjectionView(projection, flowLayoutPanel2);
                 projectionView.Visualize();
             }
+        }
+
+        private async void LoadGenres()
+        {
+            GenreList genres = await _apiClient.GetGenres();
+            TreeNode allNode = new TreeNode("All");
+            treeView1.Nodes.Add(allNode);
+            genres.Data.ForEach(genre =>
+            {
+                TreeNode newNode = new TreeNode(genre.GenreName);
+                treeView1.Nodes.Add(newNode);
+            });
+        }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {   
+            FilterChanged();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            FilterChanged();
+        }
+
+        private void FilterChanged()
+        {
+            //get filter values
+            string genre = null;
+            if (treeView1.SelectedNode != null)
+            {
+                genre = treeView1.SelectedNode.Text;
+                label3.Text = $"Selected Genre:\n{genre}";
+            }
+            string searchStr = textBox1.Text.Trim();
+
+            //clear controls
+            ClearControls(flowLayoutPanel2);
+
+            //filter projections
+            List<Projection> projectionsFiltered = _projections.FindAll(projection => 
+            {
+                if (projection.Movie.Name.ToLower().Contains(searchStr.ToLower()) || searchStr == "")
+                {
+                    string[] projectionGenres = projection.Movie.Genres.Select(g => g.GenreName).ToArray();
+                    if (projectionGenres.Contains(genre) || genre == null || genre == "All")
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            });
+
+            //visualize all found projections again
+            if (projectionsFiltered.Count > 0)
+            {
+                ProjectionTemplate(projectionsFiltered);
+            } 
+            else
+            {
+                Label noFoundLabel = new Label()
+                {
+                    Text = "Nothing found",
+                    Font = new System.Drawing.Font("Arial", 24),
+                    Size = new Size(400, 200)
+                };
+                flowLayoutPanel2.Controls.Add(noFoundLabel);
+            }
+        }
+
+        private void ClearControls(Control control)
+        {
+            /*
+            foreach (Control ctrl in control.Controls)
+            {
+                ctrl.Dispose();
+            }
+            */
+            control.Controls.Clear();
         }
 
         private async void button1_Click(object sender, EventArgs e)

@@ -52,7 +52,7 @@ namespace Cinema
             };
             var genresText = new Label
             {
-                Text = $"Genres: {String.Join(", ", _projection.Movie.Genres.Select(g => g.genreName).ToArray())}",
+                Text = $"Genres: {String.Join(", ", _projection.Movie.Genres.Select(g => g.GenreName).ToArray())}",
                 Font = new System.Drawing.Font("Arial", 14),
                 Size = new System.Drawing.Size(300, 40),
                 Location = new System.Drawing.Point(pictureBox1.Location.X + pictureBox1.Size.Width + 10, 80)

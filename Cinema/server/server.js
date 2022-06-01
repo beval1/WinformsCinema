@@ -41,6 +41,18 @@ app.get("/get-movies", async (req, res) => {
     })
 })
 
+app.get("/get-genres", async (req, res) => {
+    let result = await models.Genre.findAll({
+        raw: true
+    });
+
+    console.log(result);
+    //send data to the client;
+    res.json({
+        data: result
+    })
+})
+
 app.get("/get-projections", async (req, res) => {
     let offset = req.query.offset ? Number(req.query.offset) : 0;
     let limit = req.query.limit ? Number(req.query.limit) : null;

@@ -46,6 +46,18 @@ namespace Cinema
             return null;
         }
 
+        public async Task<GenreList> GetGenres()
+        {
+            var request = new RestRequest("get-genres/", Method.Get);
+            var response = await _client.ExecuteAsync(request);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                GenreList genres = JsonConvert.DeserializeObject<GenreList>(response.Content);
+                return genres;
+            }
+            return null;
+        }
+
         public async Task<Ticket> GetTicket(string uuid)
         {
             var request = new RestRequest($"get-ticket/{uuid}", Method.Get);
