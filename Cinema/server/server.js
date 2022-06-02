@@ -3,9 +3,6 @@ import cors from 'cors';
 import {
     models
 } from './initializeDatabase.js'
-import {
-    Sequelize
-} from 'sequelize';
 
 const app = Express();
 const port = 3002;

@@ -28,6 +28,7 @@ namespace Cinema
             _projection = projection;
             _apiClient = ApiClient.Instance;
             NameForm.NameChanged += name => _ownerName = name;
+            CenterToScreen();
         }
 
         private void SceneForm_Load(object sender, EventArgs e)
